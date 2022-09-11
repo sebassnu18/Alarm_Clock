@@ -24,8 +24,8 @@ DHT dht(DHTPIN, DHTTYPE);
 // initialize RTC (create an object RTC)
 RTC_DS1307 RTC;
 
-// set up led pin
-int ledPin = 10;
+// set up  led pin
+ int ledPin = 10;
 
 void setup () {   // setup function runs once
  
@@ -63,11 +63,14 @@ void setup () {   // setup function runs once
     Serial.println("RTC is NOT running!");
     // Sets the RTC to the time that this sketch was compiled 
     RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));
+// yyyy/mm/dd/hh/mm/ss manual modification:
+    // RTC.adjust(DateTime(2022, 9, 11, 10, 32, 0));
   }
 
-  pinMode(lightPin,INPUT);
+  // When time needs to be re-set on a previously configured device, the
+  // following line sets the RTC to the date & time this sketch was compiled
+  RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));
   pinMode(ledPin,OUTPUT);
-
   
 }
 
@@ -79,9 +82,6 @@ void loop () {
   float t = dht.readTemperature();
   int h = dht.readHumidity();
 
-  // read light sensor values
-  lightVal = analogRead(lightPin);
-  lightpercent = (lightVal * 100) / 1023;
 
   if  (isnan(t)) {
     Serial.println("Failed to read from DHT sensor!");
@@ -113,9 +113,6 @@ void loop () {
   myFile.print(',');
   myFile.print(' ');
   myFile.print(h);
-  myFile.print(',');
-  myFile.print(' ');
-  myFile.print(lightpercent);
   myFile.println();
   myFile.close();
 
@@ -147,11 +144,7 @@ void loop () {
   Serial.print(' ');
   Serial.print("Hum: ");
   Serial.print(h);
-  Serial.print(',');
   Serial.print(' ');
-  Serial.print("Light: ");
-  Serial.print(lightpercent);
-  Serial.print(" %");
   Serial.println();
   
 
